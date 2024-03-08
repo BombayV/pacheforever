@@ -10,7 +10,7 @@
     'history',
     'gallery'
   ]
-  let currentStep = 3;
+  let currentStep = 2;
 
   const startMusic = () => {
     // Interact with the DOM first
@@ -30,7 +30,7 @@
   <meta name="description" content="Esta es tu historia, tu vida, tu legado. Lo que haces, lo que eres, lo que quieres ser. Mi amiga, mi abuela, mi madre, Pache.">
 </svelte:head>
 
-<div class="bg-black relative w-full min-h-screen font-raleway flex items-center justify-center">
+<div class="bg-neutral-950 relative w-full min-h-screen font-raleway flex items-center justify-center">
   {#if currentStep === 0}
     <Countdown on:countdownEnd={startMusic} />
   {:else if currentStep === 1}
