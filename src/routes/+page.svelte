@@ -31,7 +31,7 @@
              if (!hasChanged) hasChanged = true
            }}
         />
-        <button class="p-2 rounded-md mt-3 md:mt-4 bg-neutral-300 text-black w-full font-medium transition-all duration-300 ring-2 ring-transparent border-2 border-transparent hover:ring-neutral-100 hover:bg-neutral-100 hover:border-black text-sm md:text-base">Empezar experiencia?</button>
+        <button class="btn">Empezar experiencia?</button>
         {#if form?.message && !hasChanged}
           <p class="text-red-500 mt-2 text-sm">{form.message}</p>
         {/if}
