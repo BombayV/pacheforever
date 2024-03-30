@@ -1,7 +1,9 @@
 # pacheforever
+
 A website for my grandma.
 
 ## Links
+
 - https://sr.ht/~henriquehbr/svelte-typewriter/
 - https://svelte.dev/repl/8a3b70e29442442e91709dc975e14839?version=3.53.1
 - https://blog.logrocket.com/essential-transitions-and-animations-in-svelte/

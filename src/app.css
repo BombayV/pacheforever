@@ -4,19 +4,24 @@
 @tailwind utilities;
 
 @layer components {
-  .btn {
-    @apply p-2 rounded-md mt-3 md:mt-4 bg-neutral-300 text-black w-full font-medium transition-all duration-300 ring-2 ring-transparent border-2 border-transparent hover:ring-neutral-100 hover:bg-neutral-100 hover:border-black text-sm md:text-base;
-  }
+	.btn {
+		@apply p-2 rounded-md mt-3 md:mt-4 bg-neutral-300 text-black w-full font-medium transition-all duration-300 ring-2 ring-transparent border-2 border-transparent hover:ring-neutral-100 hover:bg-neutral-100 hover:border-black text-sm md:text-base;
+	}
 }
 
 :root {
-  --cursor-color: white;
-  --cursor-width: 2px;
+	--cursor-color: white;
+	--cursor-width: 2px;
 }
 
 .card {
-  backdrop-filter: blur(8px) saturate(180%);
-  -webkit-backdrop-filter: blur(8px) saturate(180%);
-  background-color: rgba(42, 42, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.125);
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
+	background-color: rgba(42, 42, 42, 0.75);
+	border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.true-blur {
+	filter: blur(8vmax);
+	-webkit-filter: blur(8vmax);
 }
