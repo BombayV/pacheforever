@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
+  import {onMount} from 'svelte';
+  import {fade} from 'svelte/transition';
 
-	interface Breakpoint {
+  interface Breakpoint {
 		value: number;
 		columns: number;
 	}
@@ -30,8 +30,8 @@
 			columns: 5
 		}
 	};
-	const MAX_LOAD = 4;
-  let lastMaxLoad = 4;
+	let MAX_LOAD = 4;
+  let lastMaxLoad = MAX_LOAD;
 
 	const allImagesModules = import.meta.glob('/src/lib/assets/*.jpeg');
 	const allImages = Object.keys(allImagesModules).map((modulePath) => {
@@ -41,29 +41,36 @@
 			src: allImagesModules[modulePath]
 		};
 	});
-	let loadedImages = allImages.slice(0, MAX_LOAD);
-	let displayedImages: Array<Image[]> = [];
-	let lastMaxScroll = 0;
-	let mounted = {
-		title: false,
-		images: false,
-		button: false
-	};
-	let heightContainer: number = 0;
+  let displayedImages: Image[][] = [];
+  let hasMoreImages = true;
+  let mounted = {
+    title: false,
+    images: false,
+    button: false
+  };
 
 	const increaseLoad = () => {
-    if (loadedImages.length >= allImages.length) return;
-
-		let newLoad = loadedImages.length + MAX_LOAD;
-    if (newLoad > allImages.length) {
-      newLoad = allImages.length;
-      lastMaxLoad = newLoad - loadedImages.length;
+    const toBeLoaded = lastMaxLoad + MAX_LOAD;
+    if (toBeLoaded >= allImages.length) {
+      hasMoreImages = false;
     }
 
-		const newImages = allImages.slice(loadedImages.length, newLoad);
-		loadedImages = [...loadedImages, ...newImages];
-		distributeImages();
-	};
+    const newImages = allImages.slice(lastMaxLoad, toBeLoaded >= allImages.length ? allImages.length : toBeLoaded);
+    const columns = displayedImages.length;
+    for (let i = 0; i < newImages.length; i++) {
+      displayedImages[i % columns] = [...displayedImages[i % columns], newImages[i]];
+    }
+    lastMaxLoad += MAX_LOAD;
+  };
+
+  const initialCols = (columns: number): Image[][] => {
+    const newColumns = new Array(columns).fill(0).map(() => []) as Image[][];
+    const images = allImages.slice(0, lastMaxLoad);
+    for (let i = 0; i < images.length; i++) {
+      newColumns[i % columns].push(images[i]);
+    }
+    return newColumns;
+  };
 
 	const getColumns = () => {
 		const width = window.innerWidth;
@@ -71,45 +78,27 @@
 			Object.keys(BREAKPOINTS).find((key) => {
 				return width < BREAKPOINTS[key].value;
 			}) || '2xl';
-    const columns = BREAKPOINTS[breakpoint].columns;
-    if (columns === displayedImages.length) return;
-
-    if (displayedImages.length <= 0) {
-      displayedImages = Array.from({ length: columns }, () => []);
-      return;
-    }
-
-    const newColumns = Array.from({ length: columns }, () => []);
-    displayedImages.forEach((column, i) => {
-
-    });
-    displayedImages = newColumns;
+    const COLUMNS = BREAKPOINTS[breakpoint].columns;
+    if (COLUMNS === displayedImages.length) return;
+    displayedImages = initialCols(COLUMNS);
 	};
 
-	const distributeImages = () => {
-		for (let i = loadedImages.length - lastMaxLoad; i < loadedImages.length; i++) {
-			const column = i % displayedImages.length;
-			displayedImages[column] = [...displayedImages[column], loadedImages[i]];
-		}
-	};
-
-	const handleScroll = (e: any) => {
-		const currentScrollY = window.scrollY;
-		console.log(currentScrollY + window.innerHeight, lastMaxScroll, heightContainer);
-		if (currentScrollY > lastMaxScroll) {
-			increaseLoad();
-			heightContainer = document.getElementById('height')!.offsetHeight;
-		}
-	};
+	// const handleScroll = (e: any) => {
+	// 	const currentScrollY = window.scrollY;
+	// 	console.log(currentScrollY + window.innerHeight, lastMaxScroll, heightContainer);
+	// 	if (currentScrollY > lastMaxScroll) {
+	// 		increaseLoad();
+	// 		heightContainer = document.getElementById('height')!.offsetHeight;
+	// 	}
+	// };
 
 	onMount(() => {
 		getColumns();
-		distributeImages();
 
 		mounted.title = true;
 		setTimeout(() => {
 			mounted.images = true;
-			heightContainer = document.getElementById('height')?.offsetHeight || 0;
+			// heightContainer = document.getElementById('height')?.offsetHeight || 0;
 			window.addEventListener('resize', () => getColumns());
 			// window.addEventListener('scroll', handleScroll);
 			setTimeout(() => {
@@ -155,7 +144,7 @@
 			{/each}
 		</div>
 	{/if}
-	{#if mounted.button && loadedImages.length < allImages.length}
+	{#if mounted.button && hasMoreImages}
 		<button
 			transition:fade={{
 				duration: 1000,
