@@ -30,7 +30,7 @@
 	let MAX_LOAD = 8;
 	let lastMaxLoad = MAX_LOAD;
 
-	const allImagesModules = import.meta.glob('/src/lib/assets/*.jpg', {
+	const allImagesModules = import.meta.glob('/src/lib/assets/*.jpeg', {
 		eager: true,
 		query: {
 			enhanced: true
@@ -76,7 +76,7 @@
 			}
 		}
 
-		const MAX_DIFFERENCE = 2000;
+		const MAX_DIFFERENCE = 1750;
 		const shortestColumn = columnsHeights.indexOf(Math.min(...columnsHeights));
 
 		// Move images to the shortest column
