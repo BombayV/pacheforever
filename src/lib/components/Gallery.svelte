@@ -30,7 +30,7 @@
 	let MAX_LOAD = 8;
 	let lastMaxLoad = MAX_LOAD;
 
-	const allImagesModules = import.meta.glob('/src/lib/assets/*.{jpg,jpeg,webp,png}', {
+	const allImagesModules = import.meta.glob('/src/lib/assets/*.jpg', {
 		eager: true,
 		query: {
 			enhanced: true
@@ -72,7 +72,7 @@
 			let columnHeight = 0;
 			columnsHeights.push(columnHeight);
 			for (const image of displayedImages[i]) {
-				columnsHeights[i] += image.img.h;
+				columnsHeights[i] += (image as unknown as { img: { h: number } }).img.h;
 			}
 		}
 
