@@ -1,15 +1,12 @@
 <script lang="ts">
-  import {onMount} from 'svelte';
-  import {fade} from 'svelte/transition';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import type { Image } from '$lib/components/types';
+	import UseImageViewer from '$lib/components/UseImageViewer.svelte';
 
-  interface Breakpoint {
+	interface Breakpoint {
 		value: number;
 		columns: number;
-	}
-
-	interface Image {
-		name: string;
-		src: any;
 	}
 
 	const BREAKPOINTS: Record<string, Breakpoint> = {
@@ -30,47 +27,79 @@
 			columns: 5
 		}
 	};
-	let MAX_LOAD = 4;
-  let lastMaxLoad = MAX_LOAD;
+	let MAX_LOAD = 8;
+	let lastMaxLoad = MAX_LOAD;
 
-	const allImagesModules = import.meta.glob('/src/lib/assets/*.jpeg');
-	const allImages = Object.keys(allImagesModules).map((modulePath) => {
-		const imageName = modulePath.replace('/src/lib/assets/', '');
-		return {
-			name: imageName,
-			src: allImagesModules[modulePath]
-		};
+	const allImagesModules = import.meta.glob('/src/lib/assets/*.{jpg,jpeg,webp,png}', {
+		eager: true,
+		query: {
+			enhanced: true
+		}
 	});
-  let displayedImages: Image[][] = [];
-  let hasMoreImages = true;
-  let mounted = {
-    title: false,
-    images: false,
-    button: false
-  };
+	const allImages = Object.keys(allImagesModules).map(
+		(modulePath) => (allImagesModules[modulePath] as any).default
+	);
+	let displayedImages: Image[][] = [];
+	let hasMoreImages = true;
+	let selectedImage: Image | null = null;
+	let mounted = {
+		title: false,
+		images: false,
+		button: false
+	};
 
 	const increaseLoad = () => {
-    const toBeLoaded = lastMaxLoad + MAX_LOAD;
-    if (toBeLoaded >= allImages.length) {
-      hasMoreImages = false;
-    }
+		const toBeLoaded = lastMaxLoad + MAX_LOAD;
+		if (toBeLoaded >= allImages.length) {
+			hasMoreImages = false;
+		}
 
-    const newImages = allImages.slice(lastMaxLoad, toBeLoaded >= allImages.length ? allImages.length : toBeLoaded);
-    const columns = displayedImages.length;
-    for (let i = 0; i < newImages.length; i++) {
-      displayedImages[i % columns] = [...displayedImages[i % columns], newImages[i]];
-    }
-    lastMaxLoad += MAX_LOAD;
-  };
+		const newImages = allImages.slice(
+			lastMaxLoad,
+			toBeLoaded >= allImages.length ? allImages.length : toBeLoaded
+		);
+		const columns = displayedImages.length;
+		for (let i = 0; i < newImages.length; i++) {
+			displayedImages[i % columns] = [...displayedImages[i % columns], newImages[i]];
+		}
+		lastMaxLoad += MAX_LOAD;
+		handleImageSize();
+	};
 
-  const initialCols = (columns: number): Image[][] => {
-    const newColumns = new Array(columns).fill(0).map(() => []) as Image[][];
-    const images = allImages.slice(0, lastMaxLoad);
-    for (let i = 0; i < images.length; i++) {
-      newColumns[i % columns].push(images[i]);
-    }
-    return newColumns;
-  };
+	const handleImageSize = () => {
+		const columnsHeights = [];
+		for (let i = 0; i < displayedImages.length; i++) {
+			let columnHeight = 0;
+			columnsHeights.push(columnHeight);
+			for (const image of displayedImages[i]) {
+				columnsHeights[i] += image.img.h;
+			}
+		}
+
+		const MAX_DIFFERENCE = 2000;
+		const shortestColumn = columnsHeights.indexOf(Math.min(...columnsHeights));
+
+		// Move images to the shortest column
+		for (let i = 0; i < displayedImages.length; i++) {
+			const column = displayedImages[i];
+			const columnHeight = columnsHeights[i];
+			if (columnHeight - columnsHeights[shortestColumn] > MAX_DIFFERENCE) {
+				const image = column.pop();
+				displayedImages[shortestColumn].push(image as Image);
+				columnsHeights[i] -= (image as unknown as { img: { h: number } }).img.h;
+				columnsHeights[shortestColumn] += (image as unknown as { img: { h: number } }).img.h;
+			}
+		}
+	};
+
+	const initialCols = (columns: number): Image[][] => {
+		const newColumns = new Array(columns).fill(0).map(() => []) as Image[][];
+		const images = allImages.slice(0, lastMaxLoad);
+		for (let i = 0; i < images.length; i++) {
+			newColumns[i % columns].push(images[i]);
+		}
+		return newColumns;
+	};
 
 	const getColumns = () => {
 		const width = window.innerWidth;
@@ -78,19 +107,10 @@
 			Object.keys(BREAKPOINTS).find((key) => {
 				return width < BREAKPOINTS[key].value;
 			}) || '2xl';
-    const COLUMNS = BREAKPOINTS[breakpoint].columns;
-    if (COLUMNS === displayedImages.length) return;
-    displayedImages = initialCols(COLUMNS);
+		const COLUMNS = BREAKPOINTS[breakpoint].columns;
+		if (COLUMNS === displayedImages.length) return;
+		displayedImages = initialCols(COLUMNS);
 	};
-
-	// const handleScroll = (e: any) => {
-	// 	const currentScrollY = window.scrollY;
-	// 	console.log(currentScrollY + window.innerHeight, lastMaxScroll, heightContainer);
-	// 	if (currentScrollY > lastMaxScroll) {
-	// 		increaseLoad();
-	// 		heightContainer = document.getElementById('height')!.offsetHeight;
-	// 	}
-	// };
 
 	onMount(() => {
 		getColumns();
@@ -98,25 +118,23 @@
 		mounted.title = true;
 		setTimeout(() => {
 			mounted.images = true;
-			// heightContainer = document.getElementById('height')?.offsetHeight || 0;
 			window.addEventListener('resize', () => getColumns());
-			// window.addEventListener('scroll', handleScroll);
 			setTimeout(() => {
 				mounted.button = true;
 			}, 500);
 		}, 500);
 		return () => {
 			window.removeEventListener('resize', () => getColumns());
-			// window.addEventListener('scroll', handleScroll);
 		};
 	});
 </script>
 
 <div class="text-white flex flex-col relative w-full py-8 gap-y-8">
 	{#if mounted.title}
-		<h1 transition:fade class="font-playfair text-center text-3xl md:text-5xl lg:text-6xl">
+		<h1 transition:fade class="font-script text-center text-4xl md:text-5xl lg:text-6xl">
 			Tu Vida A Color
 		</h1>
+		<span class="block h-0.5 w-1/6 bg-white mx-auto"></span>
 	{/if}
 	{#if mounted.images}
 		<div
@@ -124,21 +142,30 @@
 				duration: 1000,
 				delay: 500
 			}}
-			class="w-full relative flex mx-auto gap-2 px-8"
+			class="w-full relative flex mx-auto gap-2 px-8 z-20"
 			id="height"
 		>
-			{#each displayedImages as column}
+			{#each displayedImages as column, colIdx}
 				<div class={`flex flex-col w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 gap-y-2`}>
-					{#each column as image, i}
-						<img
+					{#each column as image, imgIdx}
+						<button
+							class="relative flex justify-center items-center"
 							transition:fade={{
 								duration: 1000,
-								delay: (i + 1) * 500
+								delay: (colIdx + 1 + imgIdx) * 250
 							}}
-							class="aspect-auto rounded-sm drop-shadow-md"
-							src={`/images/${image.name}`}
-							alt="imagen"
-						/>
+							on:click={() => (selectedImage = image)}
+						>
+							<enhanced:img
+								class={`aspect-auto rounded-sm drop-shadow-lg w-full h-auto`}
+								src={image}
+								alt={`Imagen ${imgIdx * colIdx + 1}`}
+								draggable={false}
+							/>
+							<span
+								class="absolute opacity-0 bg-black transition-opacity duration-500 hover:opacity-30 w-full h-full"
+							></span>
+						</button>
 					{/each}
 				</div>
 			{/each}
@@ -151,9 +178,10 @@
 				delay: 1000
 			}}
 			on:click={increaseLoad}
-			class="btn w-fit mx-auto"
+			class="btn w-fit mx-auto z-10"
 		>
 			Cargar más
 		</button>
 	{/if}
+	<UseImageViewer bind:selectedImage />
 </div>

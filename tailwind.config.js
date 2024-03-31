@@ -4,7 +4,7 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				playfair: ['Playfair Display', 'serif'],
+				script: ['Dancing Script', 'cursive'],
 				raleway: ['Raleway', 'sans-serif']
 			}
 		}

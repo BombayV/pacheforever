@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { createEventDispatcher } from 'svelte';
 
@@ -7,6 +6,16 @@
 	let timer: ReturnType<typeof setInterval> | null = null;
 	let started = false;
 	let countdown = 3;
+
+	const startAudio = () => {
+		const audio = document.getElementById('audio') as HTMLAudioElement;
+		if (audio) {
+			audio.play();
+			audio.volume = 0.3;
+			audio.muted = false;
+			audio.autoplay = false;
+		}
+	};
 
 	$: {
 		if (countdown < 0) {
@@ -21,15 +30,16 @@
 	}
 </script>
 
-<div class="">
+<div class="relative h-screen w-full flex items-center justify-center">
 	{#if !started}
 		<button
-			class="btn"
+			class="btn w-fit"
 			on:click={() => {
 				started = true;
 				timer = setInterval(() => {
 					countdown--;
 				}, 1000);
+				startAudio();
 			}}
 		>
 			Empezamos?

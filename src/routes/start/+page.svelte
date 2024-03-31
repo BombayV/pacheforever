@@ -2,23 +2,9 @@
 	import Countdown from '$lib/components/Countdown.svelte';
 	import History from '$lib/components/History.svelte';
 	import Gallery from '$lib/components/Gallery.svelte';
-	import { fade } from 'svelte/transition';
-	import { onMount } from 'svelte';
+	import UseBlob from '$lib/components/UseBlob.svelte';
 
-	let steps = ['countdown', 'history', 'gallery'];
-	let currentStep = 2;
-
-	const startMusic = () => {
-		// Interact with the DOM first
-		const audio = new Audio('/Aviva.mp3');
-		audio.loop = true;
-		audio.volume = 1.0;
-		audio.autoplay = true;
-		audio.muted = false;
-		audio.play();
-
-		currentStep = 1;
-	};
+	let currentStep = 0;
 </script>
 
 <svelte:head>
@@ -30,11 +16,15 @@
 </svelte:head>
 
 <div class="bg-neutral-950 relative w-full min-h-screen font-raleway flex justify-center">
+	<UseBlob />
 	{#if currentStep === 0}
-		<Countdown on:countdownEnd={startMusic} />
+		<Countdown on:countdownEnd={() => (currentStep = 1)} />
 	{:else if currentStep === 1}
-		<History />
+		<History on:historyEnd={() => (currentStep = 2)} />
 	{:else if currentStep === 2}
 		<Gallery />
 	{/if}
+	<audio id="audio" loop muted>
+		<source src="/Aviva.mp3" type="audio/mpeg" />
+	</audio>
 </div>
