@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { Image } from '$lib/components/types';
 	import { fade } from 'svelte/transition';
 
-	export let selectedImage: Image | null = null;
+	export let selectedImage: string | null = null;
 </script>
 
 {#if selectedImage}
@@ -13,8 +12,8 @@
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
 		transition:fade
 	>
-		<enhanced:img
-			src={selectedImage}
+		<img
+			src={`/${selectedImage}`}
 			alt="Preview of the selected photograph"
 			class="max-w-full max-h-full h-auto w-auto aspect-auto"
 		/>

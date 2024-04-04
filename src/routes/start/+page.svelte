@@ -4,7 +4,7 @@
 	import Gallery from '$lib/components/Gallery.svelte';
 	import UseBlob from '$lib/components/UseBlob.svelte';
 
-	let currentStep = 0;
+	let currentStep = 2;
 </script>
 
 <svelte:head>
