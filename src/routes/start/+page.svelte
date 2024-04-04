@@ -3,8 +3,18 @@
 	import History from '$lib/components/History.svelte';
 	import Gallery from '$lib/components/Gallery.svelte';
 	import UseBlob from '$lib/components/UseBlob.svelte';
+  import {onMount} from "svelte";
 
 	let currentStep = 0;
+
+  onMount(() => {
+    const alreadyVisited = localStorage.getItem('alreadyVisited');
+    if (alreadyVisited) {
+      currentStep = 2;
+    } else {
+      localStorage.setItem('alreadyVisited', 'true');
+    }
+  });
 </script>
 
 <svelte:head>

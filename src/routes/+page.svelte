@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Typewriter from 'svelte-typewriter';
 	import UseBlob from '$lib/components/UseBlob.svelte';
+  import {onMount} from "svelte";
 
 	interface FormExtend {
 		message: string | null;
@@ -8,6 +9,13 @@
 
 	export let form: FormExtend;
 	let hasChanged: boolean = false;
+
+  onMount(() => {
+    const alreadyVisited = localStorage.getItem('alreadyVisited');
+    if (alreadyVisited) {
+      localStorage.removeItem('alreadyVisited');
+    }
+  });
 </script>
 
 <svelte:head>
