@@ -33,7 +33,6 @@
 	let displayedImages: string[][] = [];
 	let hasMoreImages = true;
 	let selectedImage: string | null = null;
-  let lastColumn = 0;
 	let mounted = {
 		title: false,
 		images: false,
@@ -58,7 +57,6 @@
       }
     }
 
-    console.log(newImages.length)
 		for (let i = 0; i < newImages.length; i++) {
       displayedImages[(smallestColumn + i) % columns] = [...displayedImages[(smallestColumn + i) % columns], newImages[i]];
 		}
@@ -70,7 +68,6 @@
 		const images = ALL_IMAGES.slice(0, lastMaxLoad);
 		for (let i = 0; i < images.length; i++) {
 			newColumns[i % columns].push(images[i]);
-      if (i === images.length - 1) lastColumn = i % columns;
 		}
 
     if (images.length <= 0) hasMoreImages = false;
@@ -134,7 +131,7 @@
 						>
 							<img
 								class={`aspect-auto rounded-sm drop-shadow-lg w-full h-auto`}
-								src={`/${image}`}
+								src={`https://leonorpache.com/${image}`}
 								alt={`Imagen ${imgIdx * colIdx + 1}`}
 								draggable={false}
 							/>

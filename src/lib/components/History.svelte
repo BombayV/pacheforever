@@ -20,16 +20,15 @@
 		},
 		{
 			title: 'En 1936, nacio una mujer muy especial',
-			image: '/images/IMG_7612.JPG',
 			loaded: false,
 			hideTitle: false
 		},
 		{
-			title: 'Ella es la madre de todos nosotros',
+			title: 'Algo',
 			hideTitle: false
 		},
 		{
-			title: 'La que nos dio la vida',
+			title: 'Test',
 			hideTitle: false
 		}
 	];

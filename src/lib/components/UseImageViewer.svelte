@@ -13,7 +13,7 @@
 		transition:fade
 	>
 		<img
-			src={`/${selectedImage}`}
+			src={`https://leonorpache.com/${selectedImage}`}
 			alt="Preview of the selected photograph"
 			class="max-w-full max-h-full h-auto w-auto aspect-auto"
 		/>
