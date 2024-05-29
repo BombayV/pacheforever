@@ -8,11 +8,11 @@
 	let currentStep = 0;
 
   onMount(() => {
-    const alreadyVisited = localStorage.getItem('alreadyVisited');
+    const alreadyVisited = sessionStorage.getItem('alreadyVisited');
     if (alreadyVisited) {
       currentStep = 2;
     } else {
-      localStorage.setItem('alreadyVisited', 'true');
+      sessionStorage.setItem('alreadyVisited', 'true');
     }
 
     return () => {

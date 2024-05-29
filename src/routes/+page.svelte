@@ -11,9 +11,9 @@
 	let hasChanged: boolean = false;
 
   onMount(() => {
-    const alreadyVisited = localStorage.getItem('alreadyVisited');
+    const alreadyVisited = sessionStorage.getItem('alreadyVisited');
     if (alreadyVisited) {
-      localStorage.removeItem('alreadyVisited');
+      sessionStorage.removeItem('alreadyVisited');
     }
   });
 </script>
