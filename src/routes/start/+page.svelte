@@ -14,6 +14,14 @@
     } else {
       localStorage.setItem('alreadyVisited', 'true');
     }
+
+    return () => {
+      const audio = document.getElementById('audio') as HTMLAudioElement;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    };
   });
 </script>
 

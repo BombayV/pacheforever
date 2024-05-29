@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { createEventDispatcher } from 'svelte';
+  import {createEventDispatcher, onMount} from 'svelte';
 
 	const dispatch = createEventDispatcher();
 	let timer: ReturnType<typeof setInterval> | null = null;
