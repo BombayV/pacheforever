@@ -42,7 +42,7 @@
 	{:else if currentStep === 2}
 		<Gallery />
 	{/if}
-	<audio id="audio" loop muted>
+	<audio id="audio" muted>
 		<source src="/Aviva.mp3" type="audio/mpeg" />
 	</audio>
 </div>
